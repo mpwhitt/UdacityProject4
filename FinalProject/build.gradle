@@ -1,0 +1,45 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.18'
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'appengine'
+
+task startDevServer {
+    println 'startingDevServer'
+    dependsOn = ['backend:appengineRun', 'backend:appengineStop']
+}
+
+task runTests {
+    println 'runningTests'
+    dependsOn = ['app:connectedAndroidTest']
+}
+
+task stopDevServer {
+    println 'stoppingDevServer'
+    dependsOn = ['backend:appengineStop']
+}
+
+runTests.mustRunAfter startDevServer
+stopDevServer.mustRunAfter runTests
+
+task extraCreditTask{
+    dependsOn = ['startDevServer', 'runTests', 'stopDevServer']
+}
